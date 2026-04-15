@@ -43,7 +43,7 @@ class Quadrille {
   }
 
   /**
-   * Declares that a value is a shared singleton to be reused across cells. 
+   * Declares that a value is a shared singleton to be reused across cells.
    * Unlike `Quadrille.factory(fn)`, this method is purely semantic and does
    * not modify the value. It clarifies that the same instance is intended
    * to be reused when passed to `fill()`, particularly for object values
@@ -500,7 +500,7 @@ class Quadrille {
 
   /**
    * Returns a shifted copy of the given Quadrille.
-   * Shifts all filled cells of `q` by (dRow, dCol) across the grid. 
+   * Shifts all filled cells of `q` by (dRow, dCol) across the grid.
    * - dRow > 0: shift down;   dRow < 0: shift up
    * - dCol > 0: shift right;  dCol < 0: shift left
    * - wrap = true (default): toroidal wrap-around
@@ -1025,13 +1025,14 @@ class Quadrille {
    * Searches the quadrille for matches to a given pattern quadrille.
    * @param {Quadrille} pattern - The pattern to search for.
    * @param {boolean} [strict=false] - Whether values must match exactly, not just be filled.
+   * @param {function(*, *): boolean} comparison - If `strict` is set to `true`, an optional function to determine whether two cells are considered equal. If not provided, [strict equality (`===`)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Strict_equality) will be used. If `strict` is `false`, this parameter is ignored.
    * @returns {Array<{ row: number, col: number }>} An array of match locations. Empty if no match.
    */
-  search(pattern, strict = false) {
+  search(pattern, strict = false, comparison = (a, b) => a === b) {
     const hits = [];
     this.visit(({ row, col }) =>
       this.constructor.merge(pattern, this, (q1, q2) => {
-        if (this.constructor.isFilled(q1) && (strict ? q2 !== q1 : this.constructor.isEmpty(q2))) {
+        if (this.constructor.isFilled(q1) && (strict ? !comparison(q1, q2) : this.constructor.isEmpty(q2))) {
           return q1;
         }
       }, -row, -col).order === 0 && hits.push({ row, col }));
