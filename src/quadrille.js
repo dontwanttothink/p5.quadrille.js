@@ -1527,6 +1527,16 @@ class Quadrille {
   }
 
   /**
+   * Applies a callback function to each cell, replacing it with the returned value.
+   *
+   * @param {function(*): *} callback
+   */
+  map(callback) {
+    this.visit(({ row, col }) =>
+      this._memory2D[row][col] = this._parseFn(callback(this._memory2D[row][col])));
+  }
+
+  /**
    * Internal helper to evaluate a value for a given cell.
    * If the value is a function tagged with `._isFactory`, it is called
    * with `{ row, col }`. Otherwise, the value is returned as-is.
